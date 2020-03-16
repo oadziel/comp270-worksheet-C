@@ -61,9 +61,34 @@ const Image& Camera::updateScreenBuffer(const std::vector<Object*>& objects)
 // Generates and stores rays from the camera through the centre of each pixel, in camera space
 void Camera::generateRays()
 {
-	m_pixelRays.clear();
-	// TODO: store the ray direction (in camera space through each pixel of the subdivided view plane,
-	// and store it at an appropriate index of m_pixelRays
+	//initialize a vector of vectors
+	std::vector<Vector3D> vov3D = std::vector<Vector3D>();
+
+	//for loops interating through each pixel of the viewport
+	//iterate through the y axis
+	for (int y = 0; y < m_viewPlane.resolutionY; y++)
+	{
+		//iterate through each pixel on the x axis of the current y axis value
+		for (int x = 0; x < m_viewPlane.resolutionX; x++)
+		{
+			//create ray
+			Vector3D ray;
+			// find that halfpoint of the viewplane
+			float rayX = (x - (m_viewPlane.resolutionX / 2.0f));
+			float rayY = (y - (m_viewPlane.resolutionY / 2.0f));
+			//set the forward ray distance
+			float rayZ = (m_viewPlane.distance * 20);
+			//set the values of the ray
+			ray = Vector3D(rayX, rayY, rayZ);
+
+			ray.normalise();
+			//add value to end of vector of vectors and increase by 1
+			vov3D.emplace_back(ray);
+		}
+		m_pixelRays.emplace_back(vov3D);
+		//clear vector of vectors
+		vov3D.clear();
+	}
 
 }
 
